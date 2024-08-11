@@ -1,0 +1,44 @@
+import cv2 
+#opencv library which is used in codes which involves video/image based processes. 
+
+video = cv2.VideoCapture(0)
+facedetect = cv2.CascadeClassifier(r'C:\Users\aakas\Desktop\Data\haarcascade_frontalface_default.xml') #Harrcascade algorithm to read the face based inputs
+
+faces_data = [] #list to hold the students data 
+i = 0 #initialization of i (i for
+
+while True:
+    ret, frame = video.read() #et is used as a boolean factor if 'yes(0)' it captures the video frame by frame, if 'no(1)' it does not capture it shows error
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #input is taken as gray images
+    faces = facedetect.detectMultiScale(gray, 1.3, 5) 
+# detectMultiScale - used to dtect the different size of images
+  # 1.3 - minimizig the size upto 30% so it will have high quality
+  # 5 - minNeighbours (detect show the actual 5 rectangles)
+  eg: # is here a rectangle
+#######    #######
+#  1  #    #  2  #
+#######    #######
+#######    #######
+#   3 #    #  4  #
+#######    #######
+      #######    
+      #  5  #    
+      #######    
+
+for (x, y, u, v) in faces:
+        crop_img = frame[y:y+v, x:x+u, :] #'v' is along y-axis and 'u' is alomg x-axis
+        resized_img = cv2.resize(crop_img, (50, 50))
+        if len(faces_data) <= 123 and i % 10 == 0:
+            faces_data.append(resized_img)
+            i+=1
+        cv2.putText(frame, str(len(faces_data)), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (50, 50, 255), 1) #the first (50,50) is l*b frame 
+# the 1 is the font size and the last one is for thickness of the letter
+#(50,50,255) is the colour size
+        cv2.rectangle(frame, (x, y), (x+u, y+v), (50, 50, 255), 1)
+  #50,50,255 is the coour of frame and 1 is the thickness
+    cv2.imshow("Frame", frame)
+    k = cv2.waitKey(1)
+    if k == ord('q') or len(faces_data) == 123:
+        break
+video.release()
+cv2.destroyAllwindows()
