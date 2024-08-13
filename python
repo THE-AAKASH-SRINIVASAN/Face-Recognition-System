@@ -1,4 +1,11 @@
 import cv2 
+import pickle as pkl
+#to store complex dsa like files, object and dictonaries (but not secure)
+import numpy as np
+#numpy is involved here in order we have matrix type of calculation of images and videos(computer vision)
+import os
+#allows the user to handle the file management - creating,removing,- files,directories
+#also helps to run the code in any envi(windows,ios,linux)
 #opencv library which is used in codes which involves video/image based processes. 
 
 video = cv2.VideoCapture(0)
@@ -6,6 +13,8 @@ facedetect = cv2.CascadeClassifier(r'C:\Users\aakas\Desktop\Data\haarcascade_fro
 
 faces_data = [] #list to hold the students data 
 i = 0 #initialization of i (i for
+
+names=input("Enter your name:")
 
 while True:
     ret, frame = video.read() #et is used as a boolean factor if 'yes(0)' it captures the video frame by frame, if 'no(1)' it does not capture it shows error
@@ -42,3 +51,32 @@ for (x, y, u, v) in faces:
         break
 video.release()
 cv2.destroyAllwindows()
+
+faces_data=np.asarray(faces_data)
+#array is used in order to take a list of face_data
+faces_data=faces_data.reshape(100,-1)
+#'100' represent 100Rows
+#'-1' refers to calculation of columns based on the size of the array & specified no.of rows
+
+if 'names.pkl' not in os.listdir('data/'):
+    names=[names]*123
+    with open('data/names.pkl', 'wb') as f:
+        pkl.dump(names, f)
+else:
+    with open('data/names.pkl','rb') as f:  
+        names=pkl.load(f)
+    names=names+[names]*123
+    with open('data/names.pkl', 'wb') as f:
+        pkl.dump(names, f)
+
+if 'faces_data.pkl' not in os.listdir('data/'):
+    with open('data/faces_data.pkl', 'wb') as f:
+        pkl.dump(faces_data, f)
+else:
+    with open('data/faces_data.pkl', 'rb') as f:  
+        faces=pkl.load(f)
+    names=np.append(faces,faces_data,axis=0)
+    with open('data/faces_data.pkl', 'wb') as f:
+        pkl.dump(faces, f)
+
+
